@@ -146,7 +146,6 @@ class BuyController extends Controller {
 		$order_histories = Buy::with(['user', 'kind'])->whereHas('user', function ($q) {
 			$q->where('user_id', Auth::user()->id);
 		})->get()->groupBy('invoice_id');
-		dd($order_histories);
 		return view('user/order_history', ['order_histories' => $order_histories]);
 	}
 }
