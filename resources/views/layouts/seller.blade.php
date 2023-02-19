@@ -60,10 +60,7 @@
 								</svg>
 								<span class="d-block">質問一覧</span>
 							</a>
-							<a href="{{route('user_info')}}" class="nav-link my-auto text-center">
-								<img src="{{asset(Auth::user()->icon)}}" alt="マイページ" class="rounded-circle border border-secondary object-fit-cover" style="width: 30px;">
-								<span class="d-block">マイページ</span>
-							</a>
+						
 							@endif
 						</li>
 						@auth

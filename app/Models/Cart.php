@@ -9,7 +9,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class Cart extends Model {
 	use HasFactory;
 	use HasUuids;
-	protected $fillable = [];
+	protected $fillable = [
+		'user_id',
+		'kind_id',
+		'cart_quantity',
+	];
 
 	// user（ユーザー）と連結
 	public function user() {
@@ -17,7 +21,7 @@ class Cart extends Model {
 	}
 
 	// product（商品）と連結
-	public function product() {
-		return $this->belongsTo(Product::class);
+	public function kind() {
+		return $this->belongsTo(kind::class);
 	}
 }

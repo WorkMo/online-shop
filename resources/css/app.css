@@ -1,5 +1,5 @@
 :root {
-	--star-size: 1.5em;
+	--star-size: 1em;
 	--star-color: #fff;
 	--star-background: #fc0;
 }
@@ -19,4 +19,14 @@
 	background: linear-gradient(90deg, var(--star-background) var(--percent), var(--star-color) var(--percent));
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
+}
+
+.watch-toggle{
+	color: white;
+	stroke:green;
+	z-index:10;
+}
+.watched {
+	color: green;
+		z-index: 10;
 }

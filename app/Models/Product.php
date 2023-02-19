@@ -21,6 +21,10 @@ class Product extends Model {
 		'total_sales',
 	];
 
+	// user(ユーザー)と連結
+	public function user() {
+		return $this->belongsTo(User::class);
+	}
 	// productImage(商品画像)と連結
 	public function productImages() {
 		return $this->hasMany(ProductImage::class);
@@ -40,11 +44,12 @@ class Product extends Model {
 	public function purchases() {
 		return $this->hasMany(Purchase::class);
 	}
-
-	// Buy(売上)と連結
-	public function buys() {
-		return $this->hasMany(Buy::class);
+	// watchList(お気に入り)と連結
+	public function watchLists() {
+		return $this->hasMany(WatchList::class);
 	}
+
+
 
 	// cart(カート)と連結
 	public function carts() {
@@ -54,5 +59,13 @@ class Product extends Model {
 	// review(レビュー)と連結
 	public function reviews() {
 		return $this->hasMany(Review::class);
+	}
+
+
+
+
+
+	public function is_watch($user): bool {
+		return WatchList::where('user_id', $user->id)->where('product_id', $this->id)->first() !== null;
 	}
 }

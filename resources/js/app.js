@@ -56,13 +56,13 @@ $(function () {
 		});
 	}
 
-	function change(){
+	function change() {
 		changeNumbers('.image_form', 'product_image', '.product_image_form', '.preview', 'preview', '.preview_form');
-		changePreview('.main_form', '.main_image_form', '#main_preview_temp','.main_preview_form');
-		changePreview('.icon_form', '.icon_image_form', '','.icon_preview_form');
+		changePreview('.main_form', '.main_image_form', '#main_preview_temp', '.main_preview_form');
+		changePreview('.icon_form', '.icon_image_form', '', '.icon_preview_form');
 	}
 	// 数字を入れ替える
-	function changeNumbers(target, name, parents, children, preview_name,preview_form) {
+	function changeNumbers(target, name, parents, children, preview_name, preview_form) {
 		var $i = 0;
 		$(target).each(function () {
 			if ($(this).val() !== "") {
@@ -80,18 +80,18 @@ $(function () {
 			}
 		});
 	}
-function changePreview(target,parents,children,preview_form){
-	$(target).each(function () {
-		if ($(this).val() !== "") {
-			$(this).parents(parents).find(preview_form).css({ 'display': '' });
-		} else {
-			$(this).parents(parents).find(preview_form).css({ 'display': 'none' });
-			// if ($(this).parents(parents).find(children)) {
-			// 	$(this).parents(parents).find(preview_form).css({ 'display': '' });
-			// }
-		}
-	});
-}
+	function changePreview(target, parents, children, preview_form) {
+		$(target).each(function () {
+			if ($(this).val() !== "") {
+				$(this).parents(parents).find(preview_form).css({ 'display': '' });
+			} else {
+				$(this).parents(parents).find(preview_form).css({ 'display': 'none' });
+				// if ($(this).parents(parents).find(children)) {
+				// 	$(this).parents(parents).find(preview_form).css({ 'display': '' });
+				// }
+			}
+		});
+	}
 
 
 	// tempファイルが有るとき
@@ -123,11 +123,58 @@ function changePreview(target,parents,children,preview_form){
 
 
 
-		// $('.number').on('blur change input', function () {
-		// 	const $this = $(this);
-		// 	if ($this.val() !== '') {
-		// 		$this.next().text((+$this.val()).toLocaleString());
-		// 	}
-		// });
+	// $('.number').on('blur change input', function () {
+	// 	const $this = $(this);
+	// 	if ($this.val() !== '') {
+	// 		$this.next().text((+$this.val()).toLocaleString());
+	// 	}
+	// });
+
+	var noValue = $('#kind_id').html();
+	$('#kind_id').on('change', function () {
+		var kind = $(this).val();
+		if (kind) {
+			$('#kind_price').html('');
+			var price = kind_data[kind];
+			$('#kind_price').append(price + '円');
+		} else {
+			$('#kind_price').html(noValue);
+		}
+	})
+
+	$('.delete').on('click', function () {
+		if (!confirm('削除してもよろしいですか？')) {
+			return false
+		}
+	})
+
+
+
+		let watch = $('.watch-toggle'); //watch-toggleのついたiタグを取得し代入。
+		let WatchListId; //変数を宣言（なんでここで？）
+		watch.on('click', function () { //onはイベントハンドラー
+			let $this = $(this); //this=イベントの発火した要素＝iタグを代入
+			WatchListId = $this.data('watch-id'); //iタグに仕込んだdata-review-idの値を取得
+			//ajax処理スタート
+			$.ajax({
+				headers: { //HTTPヘッダ情報をヘッダ名と値のマップで記述
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},  //↑name属性がcsrf-tokenのmetaタグのcontent属性の値を取得
+				url: '/watch', //通信先アドレスで、このURLをあとでルートで設定します
+				method: 'POST', //HTTPメソッドの種別を指定します。1.9.0以前の場合はtype:を使用。
+				data: { //サーバーに送信するデータ
+					'product_id': WatchListId //いいねされた投稿のidを送る
+				},
+			})
+				//通信成功した時の処理
+				.done(function (data) {
+					$this.toggleClass('watched'); //likedクラスのON/OFF切り替え。
+					$this.next('.watch-counter').html(data.watch_lists_count);
+				})
+				//通信失敗した時の処理
+				.fail(function () {
+					console.log('fail');
+				});
+		});
 
 });

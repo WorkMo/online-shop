@@ -40,9 +40,26 @@
 					@else
 					@foreach($categories as $category)
 					<tr class="text-center align-middle">
-						<td>{{$category->category_name}}</td>
-						<td><button class="btn btn-outline-dark">編集</button></td>
-						<td><button class="btn btn-outline-dark">削除</button></td>
+						<form method="POST" action="{{ route('category_update') }}">
+							@csrf
+							<td>
+								<div class=" d-flex flex-flow"><input type="text" class="form-control @error('category_update$category->id') is-invalid @enderror" name="category_update<?= $category->id ?>" value="{{ old('category_update".$category->id."',$category->category_name) }}" placeholder="" required autocomplete="" autofocus>
+
+								</div>
+								@error('category_update'.$category->id)
+								<span class="invalid-feedback d-block" role="alert">
+									<strong>{{ $message }}</strong>
+								</span>
+								@enderror
+							</td>
+							<td><button type="submit" class="btn btn-outline-dark text-center align-middle my-auto text-nowrap" name="update" value="{{$category->id}}">変更</button></td>
+						</form>
+						<td>
+
+							<a href="{{route('category_delete',$category->id)}}">
+								<button class="btn btn-outline-dark delete">削除</button>
+							</a>
+						</td>
 					</tr>
 					@endforeach
 					@endif

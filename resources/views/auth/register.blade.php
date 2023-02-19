@@ -9,7 +9,7 @@
 					<form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
 						@csrf
 						<div class="row mb-3">
-							<label for="user_name" class="col-md-4 col-form-label text-md-end">名前 <span class="badge rounded-pill bg-danger">必須</span></label>
+							<label for="user_name" class="col-md-4 col-form-label text-md-end">お名前 <span class="badge rounded-pill bg-danger">必須</span></label>
 							<div class="col-md-6">
 								<input id="user_name" type="text" class="form-control @error('user_name') is-invalid @enderror" name="user_name" value="{{ old('user_name') }}" placeholder="山田 太郎" required autocomplete="name" autofocus>
 								@error('user_name')

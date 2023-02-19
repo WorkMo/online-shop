@@ -6,6 +6,7 @@
 		<div class="p-4 card container-fluid">
 			<div class="row row-cols-2 ">
 				<div class="card border-0 col">
+
 					<div class="h-100">
 						<div id="carouselExampleControlsNoTouching" class="carousel slide" data-bs-touch="true" data-bs-interval="false">
 							@if($product->image_count >1)
@@ -56,7 +57,7 @@
 							@endif
 						</div>
 						<div class="carousel slide text-center border-0">
-							@if($product->image_count >1)
+							@if($product->image_count >0)
 							<div class="">
 								<button type=" button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide-to="0" aria-current="true" aria-label="Slide 1" class="border-0 active">
 									<img src="{{asset($product->product_images[0])}}" alt="" style="width:50px;height:50px;" class="object-fit-cover">
@@ -71,53 +72,67 @@
 						</div>
 					</div>
 				</div>
-				<div class="fs-1 col">
+				<div class=" col">
 					<div class="h-100">
-						<div class="fs-1 h-50 card col p-3 overflow-auto">
-							{{$product->product_name}}
-						</div>
-						<div class="fs-1 h-50 card col overflow-auto">
-							<form method="POST" action="{{ route('kind_register') }}">
-								@csrf
+						<div class=" h-50 card col overflow-auto">
+							<div class="card-header fs-5 text-center">商品名</div>
+							<div class="card-body p-3 fs-2">
+								{{$product->product_name}}
+							</div>
 
-								<div class="input-group mb-3">
-									<label class="input-group-text" for="kind_id">商品</label>
-									<select input id="kind_id" class="form-select @error('kind_id') is-invalid @enderror" name="kind_id" required autofocus>
-										<option hidden value="{{ old('kind_id','') }}">{{ old('kind_id','選択してください') }}</option>
-										@foreach($product->kinds as $kind)
-										<option value="{{$kind->id}}">{{$kind->kind_name}}</option>
-										@endforeach
-									</select>
-									@error('prefecture')
-									<span class="invalid-feedback" role="alert">
-										<strong>{{ $message }}</strong>
-									</span>
-									@enderror
-								</div>
-								<div class="row text-center">
-									<label for="stock_quantity" class="col col-form-label text-md-end fs-5">数量</label>
-									<div class="col">
-										<input id="stock_quantity" type="number" min="1" max="99999999999" class="form-control w-50 @error('stock_quantity') is-invalid @enderror" name="stock_quantity" value="{{ old('stock_quantity',1) }}" placeholder="" autocomplete="" autofocus>
-										@error('stock_quantity')
+						</div>
+						<div class="fs-1 h-50 card col  overflow-auto">
+							<div class="card-header fs-5 text-center">数量選択
+							</div>
+							<div class="card-body p-3 ">
+								<form method="POST" action="{{ route('cart_add') }}">
+									@csrf
+
+									<div class="input-group mb-3">
+										<label class="input-group-text" for="kind_id">商品</label>
+										<select input id="kind_id" class="form-select @error('kind_id') is-invalid @enderror" name="kind_id" required autofocus>
+											<option hidden value="{{ old('kind_id','') }}">{{ old('kind_id','選択してください') }}</option>
+											@foreach($product->kinds as $kind)
+											<option class="overflow-auto" value="{{$kind->id}}">{{$kind->kind_name}}</option>
+											@endforeach
+										</select>
+										<span id="kind_price" class="input-group-text bg-light w-25 overflow-auto"></span>
+										@error('kind_id')
 										<span class="invalid-feedback" role="alert">
 											<strong>{{ $message }}</strong>
 										</span>
 										@enderror
 									</div>
-								</div>
-								<div class="row mb-0">
-									<div class="text-center align-middle my-auto">
-										<button type="button" class="btn btn-success text-center align-middle my-auto"> カートに入れる</button>
+									<div class="row text-center">
+										<label for="cart_quantity" class="col col-form-label text-md-end fs-5">数量</label>
+										<div class="col">
+											<input id="cart_quantity" type="number" min="1" max="99999999999" class="form-control w-50 @error('cart_quantity') is-invalid @enderror" name="cart_quantity" value="{{ old('cart_quantity',1) }}" placeholder="" autocomplete="" autofocus>
+											@error('cart_quantity')
+											<span class="invalid-feedback" role="alert">
+												<strong>{{ $message }}</strong>
+											</span>
+											@enderror
+										</div>
 									</div>
-								</div>
-							</form>
+									<div class="row mb-0">
+										<div class="text-center align-middle my-auto">
+											<button type="submit" class="btn btn-success text-center align-middle my-auto"> カートに入れる</button>
+										</div>
+									</div>
+								</form>
+							</div>
+
 						</div>
 					</div>
 				</div>
 			</div>
 
 			<div class="card fs-1 m-2 overflow-auto">
-				{{$product->product_detail}}
+				<div class="card-header fs-5 text-center">商品説明</div>
+				<div class="card-body p-3 fs-2">
+					{{$product->product_detail}}
+				</div>
+
 			</div>
 			<div class="card fs-1 m-2 overflow-auto">
 				レビュー
@@ -127,4 +142,7 @@
 			</div>
 		</div>
 	</div>
+	<script>
+		var kind_data = @json($kind_data);
+	</script>
 	@endsection

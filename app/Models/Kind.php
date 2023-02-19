@@ -25,4 +25,8 @@ class Kind extends Model {
 	public function product() {
 		return $this->belongsTo(Product::class);
 	}
+	// Buy(売上)と連結
+	public function buys() {
+		return $this->hasMany(Buy::class);
+	}
 }

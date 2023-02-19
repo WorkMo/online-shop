@@ -11,8 +11,8 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-	public function redirect() {
-		return redirect()->route('index');
+	public function message_redirect($massage) {
+		return view('message',['massage'=>$massage]);
 	}
 
 }

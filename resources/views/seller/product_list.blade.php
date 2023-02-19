@@ -14,8 +14,8 @@
 						<th> レビュー評価</th>
 						<th> 販売累計数</th>
 						<th>メッセージ</th>
-						<th> 詳細</th>
-						<th> 編集</th>
+						<th> 詳細・編集</th>
+						<th> 種類一覧</th>
 						<th> 削除</th>
 					</tr>
 					@if($products->isEmpty())
@@ -32,9 +32,9 @@
 						<td>{{$product->review_rating_average}}</td>
 						<td>{{$product->total_sales}}</td>
 						<td class="text-start">@if($product->kinds_count == 0)商品種類を登録してください。@endif</td>
-						<td><button class="btn btn-outline-dark">詳細</button></td>
-						<td><button class="btn btn-outline-dark">編集</button></td>
-						<td><button class="btn btn-outline-dark">削除</button></td>
+						<td><a href="{{route('product_detail',$product->id)}}"><button class="btn btn-outline-dark">詳細</button></a></td>
+						<td><a href="{{route('kind_list',$product->id)}}"><button class="btn btn-outline-dark">種類</button></a></td>
+						<td><a href="{{route('product_delete',$product->id)}}"><button class="btn btn-outline-dark delete">削除</button></a></td>
 					</tr>
 					@endforeach
 					@endif

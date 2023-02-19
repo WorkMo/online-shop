@@ -21,7 +21,7 @@ return new class extends Migration {
 			$table->char('product_category_id',36)->index()->comment('商品カテゴリーID');
 			$table->string('product_detail')->index()->comment('商品説明');
 			$table->string('product_main_image')->nullable($value = true)->comment('商品メイン画像URL');
-			$table->integer('review_rating_average')->nullable($value = true)->index()->comment('レビュー数値評価平均');
+			$table->decimal('review_rating_average',3,2)->nullable($value = true)->index()->comment('レビュー数値評価平均');
 			$table->integer('review_rating_number')->nullable($value = true)->index()->comment('レビュー評価件数');
 			$table->integer('total_sales')->nullable($value = true)->index()->comment('販売累計数');
 			$table->timestamps();

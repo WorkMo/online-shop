@@ -6,17 +6,16 @@ use Illuminate\Http\Request;
 
 use App\Models\Product;
 use App\Models\ProductImage;
-use App\Models\ProductCategory;
-use app\Models\Kind;
-use app\Models\Review;
-use app\Models\Buy;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller {
 
 	// indexページヘ表示
 	protected function index() {
+		session()->forget('data');
 		// $files = Storage::allFiles('public/temp');
 		// foreach ($files as $f) {
 		// 	$path = Storage::url($f);
@@ -28,18 +27,15 @@ class ProductController extends Controller {
 
 
 		$products = Product::with(['kinds' => function ($q) {
-			$q->where('kind_status', 'active');
-		}], ['buys' => function ($q) {
-			$q->where('buy_status', 'active');
-		}, 'buys.review' => function ($q) {
-			$q->where('review_status', 'active');
-		}])
+			$q->where('kind_status', 'active')->where('kind_public', 'public');
+		},'watchLists'])
 			->where('product_status', 'active')
 			->where('product_public', 'public')
 			->has('kinds')
-
-
+			->withMin('kinds', 'product_price_with_tax')
+			->withMax('kinds', 'product_price_with_tax')
 			->orderBy('created_at', 'asc')
+			->withCount('watchLists')
 			->get();
 		foreach ($products as $product) {
 			if ($product->product_main_image == null) {
@@ -52,11 +48,11 @@ class ProductController extends Controller {
 			}
 		}
 		return view('user/index', [
-			'products' => $products
+			'products' => $products,
 		]);
 	}
 
-	protected function detail($product_id) {
+	public function detail($product_id) {
 		$product = Product::with(['kinds' => function ($q) {
 			$q->where('kind_status', 'active');
 		}])
@@ -68,32 +64,41 @@ class ProductController extends Controller {
 			->where('product_image_status', 'active')
 			->get();
 		$product_images = [];
-		if ($product->product_main_image !== null) {
+
+		if ($product->product_main_image !== '') {
 			$product_images[] = $product->product_main_image;
 		}
-		if ($images !== null) {
+
+		if ($images !== '') {
 			foreach ($images as $image) {
 				$product_images[] = $image->product_image;
 			}
 		}
+
 		$product['image_count'] = count($product_images);
 		if ($product['image_count'] > 0) {
 			$product['product_images'] = $product_images;
 		} else {
-			$product['product_images'] = 'storage/img/l_e_others_501.png';
+			$product['product_images'] = ['storage/img/l_e_others_501.png'];
 		}
 		$kind_id = [];
 		foreach ($product->kinds as $kind) {
 			$kind_id[] = $kind->id;
 		}
-
 		session()->forget('data');
 		session()->put('data', [
 			'product_id' => $product->id,
 			'kind_id' => $kind_id,
 		]);
-		return view('user/detail', ['product' => $product]);
+		$kind_data = [];
+		foreach ($product->kinds as $kind) {
+			$kind_data[$kind->id] = $kind->product_price_with_tax;
+		}
+		return view('user/detail', ['product' => $product, 'kind_data' => $kind_data]);
 	}
+
+
+
 
 
 	// 登録商品一覧
@@ -266,5 +271,19 @@ class ProductController extends Controller {
 			'product_id' => $save->id,
 			'product_name'  =>  $save->product_name,
 		]);
+	}
+	protected function product_detail() {
+	}
+	protected function product_delete($product_id) {
+		$product = Product::find($product_id);
+		if ($product->user_id == Auth::user()->id) {
+			$product->product_status = 'delete';
+			$product->save();
+			return redirect()->route('product_list');
+		} else {
+			$message = app()->make('App\Http\Controllers\Controller');
+			return
+				$message->message_redirect('エラーが発生いたしました。');
+		}
 	}
 }

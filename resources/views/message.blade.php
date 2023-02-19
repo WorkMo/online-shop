@@ -13,11 +13,9 @@
 						{{ session('status') }}
 					</div>
 					@endif
-
-					{{ __('You are logged in!') }}
-
-
-
+					@isset($massage)
+					{{ $massage }}
+					@endisset
 				</div>
 			</div>
 		</div>

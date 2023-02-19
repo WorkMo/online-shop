@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 @section('content')
 <div class="container">
 	<div class="row justify-content-center">
@@ -80,28 +80,27 @@
 
 						</div>
 						<div class="row mb-3 text-center d-flex flex-flow">
+							@if($user->seller!=='1')
 							<div class="col">
-								<a href=""><button class="btn btn-primary">
-										編集
-									</button></a>
-							</div>
-							@if(Auth::user()->seller=='0' && Auth::user()->admin=='0')
-							<div class="col">
-								<a href="{{route('seller_request')}}"><button class="btn btn-primary">
-										販売者申請
-									</button></a>
-							</div>
-							@elseif(Auth::user()->seller=='3')
-							<div class="col">
-								<button class="btn btn-primary" disabled>
-									販売者申請中
-								</button>
+								<a href="{{route('seller_update',$user->id)}}">
+									<button class="btn btn-primary">
+										承認
+									</button>
+								</a>
 							</div>
 							@endif
 							<div class="col">
-								<a href=""><button class="btn btn-primary">
-										アカウント削除
-									</button></a>
+								<a href="{{route('seller_delete',$user->id)}}">
+									@if($user->seller=='1')
+									<button class="btn btn-primary">
+										権限削除
+									</button>
+									@elseif($user->seller=='3')
+									<button class="btn btn-primary">
+										否認
+									</button>
+									@endif
+								</a>
 							</div>
 						</div>
 					</div>
