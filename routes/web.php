@@ -19,6 +19,8 @@ Auth::routes();
 Route::get('/message', [App\Http\Controllers\HomeController::class, 'index'])->name('message');
 Route::get('/', [App\Http\Controllers\ProductController::class, 'index'])->name('index');
 Route::get('/detail/{product_id}', [App\Http\Controllers\ProductController::class, 'detail'])->name('detail');
+Route::get('/search', [App\Http\Controllers\ProductController::class, 'search'])->name('search');
+
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -40,8 +42,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 	Route::get('/buy_form/{seller}', [App\Http\Controllers\BuyController::class, 'buy_form'])->name('buy_form');
 	Route::post('/buy', [App\Http\Controllers\BuyController::class, 'buy'])->name('buy');
 	Route::get('/order_history', [App\Http\Controllers\BuyController::class, 'order_history'])->name('order_history');
-	Route::post('/watch',[App\Http\Controllers\WatchListController::class, 'watch'])->name('watch_list');
-
+	Route::post('/watch',[App\Http\Controllers\WatchListController::class, 'watch'])->name('watch');
+	Route::get('/watch_list', [App\Http\Controllers\ProductController::class, 'watch_list'])->name('watch_list');
 
 
 

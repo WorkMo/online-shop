@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductCategory;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -28,7 +29,7 @@ class ProductController extends Controller {
 
 		$products = Product::with(['kinds' => function ($q) {
 			$q->where('kind_status', 'active')->where('kind_public', 'public');
-		},'watchLists'])
+		}, 'watchLists'])
 			->where('product_status', 'active')
 			->where('product_public', 'public')
 			->has('kinds')
@@ -47,8 +48,88 @@ class ProductController extends Controller {
 				}
 			}
 		}
+		$product_categories = ProductCategory::where('product_category_status', 'active')
+			->get();
 		return view('user/index', [
 			'products' => $products,
+			'product_categories' => $product_categories,
+		]);
+	}
+
+	protected function search(Request $request) {
+		$keyword = null;
+		$keyword = $request->input('keyword');
+		session()->forget('data');
+		$products = Product::with(['kinds' => function ($q) {
+			$q->where('kind_status', 'active')->where('kind_public', 'public');
+		}, 'watchLists'])
+			->where('product_status', 'active')
+			->where('product_public', 'public')
+			->has('kinds')
+			->withMin('kinds', 'product_price_with_tax')
+			->withMax('kinds', 'product_price_with_tax')
+			->orderBy('created_at', 'asc')
+			->withCount('watchLists');
+		foreach ($products as $product) {
+			if ($product->product_main_image == null) {
+				$product->product_main_image = 'storage/img/l_e_others_501.png';
+			} else {
+				$file_name = str_replace('storage/', '', $product->product_main_image);
+				if (Storage::disk('public')->exists($file_name) == null) {
+					$product->product_main_image = 'storage/img/l_e_others_501.png';
+				}
+			}
+		}
+		$product_categories = ProductCategory::where('product_category_status', 'active')
+			->get();
+		if ($keyword != null) {
+
+			$products = $products->where('product_keyword', 'like', '%' . $keyword . '%')->get();
+			return view('user/index', [
+				'products' => $products,
+				'product_categories' => $product_categories,
+			]);
+		} else {
+			$products = $products->get();
+			return view('user/index', [
+				'products' => $products,
+				'product_categories' => $product_categories,
+			]);
+		}
+	}
+
+
+	protected function watch_list() {
+		session()->forget('data');
+
+		$products = Product::with(['kinds' => function ($q) {
+			$q->where('kind_status', 'active')->where('kind_public', 'public');
+		}, 'watchLists'])
+		->where('product_status', 'active')
+		->where('product_public', 'public')
+		->has('kinds')
+			->withMin('kinds', 'product_price_with_tax')
+			->withMax('kinds', 'product_price_with_tax')
+			->orderBy('created_at', 'asc')
+			->whereHas('watchLists',function($q){
+				$q->where('user_id',Auth::user()->id);
+			})
+			->get();
+		foreach ($products as $product) {
+			if ($product->product_main_image == null) {
+				$product->product_main_image = 'storage/img/l_e_others_501.png';
+			} else {
+				$file_name = str_replace('storage/', '', $product->product_main_image);
+				if (Storage::disk('public')->exists($file_name) == null) {
+					$product->product_main_image = 'storage/img/l_e_others_501.png';
+				}
+			}
+		}
+		$product_categories = ProductCategory::where('product_category_status', 'active')
+		->get();
+		return view('user/index', [
+			'products' => $products,
+			'product_categories' => $product_categories,
 		]);
 	}
 
