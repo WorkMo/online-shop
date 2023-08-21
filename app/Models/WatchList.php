@@ -10,7 +10,6 @@ class WatchList extends Model {
 	use HasFactory;
 	use HasUuids;
 	protected $fillable = [
-		'watch_lists_status',
 		'user_id',
 		'product_id',
 	];

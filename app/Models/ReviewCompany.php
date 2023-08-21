@@ -6,24 +6,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class Review extends Model {
+class ReviewCompany extends Model {
 	use HasFactory;
 	use HasUuids;
 	protected $fillable = [
-		'review_status',
+		'review_company_status',
 		'review_name',
 		'buy_id',
-		'review_rating',
-		'review_text',
+		'review_company_rating',
+		'review_company_text',
 	];
 
-	// ReviewImageと連結
-	public function reviewImages() {
-		return $this->hasMany(ReviewImage::class);
+	// ReviewCompanyImageと連結
+	public function reviewCompanyImages() {
+		return $this->hasMany(ReviewCompanyImage::class);
 	}
-	// ReviewLikeと連結
-	public function reviewLikes() {
-		return $this->hasMany(ReviewLike::class);
+	// ReviewCompanyLikeと連結
+	public function reviewCompanyLikes() {
+		return $this->hasMany(ReviewCompanyLike::class);
 	}
 
 	// buy（購入）と連結

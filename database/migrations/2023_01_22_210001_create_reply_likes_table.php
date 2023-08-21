@@ -13,7 +13,6 @@ return new class extends Migration {
 	public function up() {
 		Schema::create('reply_likes', function (Blueprint $table) {
 			$table->uuid('id')->primary()->index()->comment('返信いいねID');
-			$table->string('reply_likes_status', 20)->index()->default('active')->comment('返信いいねステータス active or deleted');
 			$table->char('user_id', 36)->index()->comment('いいねしたユーザーID');
 			$table->char('reply_id', 36)->index()->comment('いいねされた返信ID');
 			$table->timestamps();

@@ -9,5 +9,13 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class ReplyImage extends Model {
 	use HasFactory;
 	use HasUuids;
-	protected $fillable = [];
+	protected $fillable = [
+		'reply_image_status',
+		'reply_id',
+		'reply_image',
+	];
+	// Replyと連結
+	public function reply() {
+		return $this->belongsTo(Reply::class);
+	}
 }

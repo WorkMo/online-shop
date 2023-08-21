@@ -26,6 +26,8 @@ Route::get('/search', [App\Http\Controllers\ProductController::class, 'search'])
 Route::middleware(['auth', 'verified'])->group(function () {
 	//  会員以外見られたくないルート設定
 	Route::get('/user_info', [\App\Http\Controllers\UserController::class, 'info'])->name('user_info');
+	Route::get('/user_edit', [\App\Http\Controllers\UserController::class, 'edit_form'])->name('user_edit_form');
+	Route::post('/user_edit', [\App\Http\Controllers\UserController::class, 'edit'])->name('user_edit');
 	Route::get('/seller_request', [\App\Http\Controllers\UserController::class, 'seller_request'])->name('seller_request');
 	Route::get('/review_list', [\App\Http\Controllers\ReviewController::class, 'review_list'])->name('review_list');
 	Route::get('/inquiry_list', [\App\Http\Controllers\InquiryController::class, 'inquiry_list'])->name('inquiry_list');
@@ -44,7 +46,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 	Route::get('/order_history', [App\Http\Controllers\BuyController::class, 'order_history'])->name('order_history');
 	Route::post('/watch',[App\Http\Controllers\WatchListController::class, 'watch'])->name('watch');
 	Route::get('/watch_list', [App\Http\Controllers\ProductController::class, 'watch_list'])->name('watch_list');
-
+	Route::get('/review/{id}', [App\Http\Controllers\ReviewController::class, 'review_form'])->name('review_form');
+	Route::post('/review_register', [App\Http\Controllers\ReviewController::class, 'review_register'])->name('review_register');
+	Route::get('/review_company/{id}', [App\Http\Controllers\ReviewCompanyController::class, 'review_company_form'])->name('review_company_form');
+	Route::post('/review_company_register', [App\Http\Controllers\ReviewCompanyController::class, 'review_company_register'])->name('review_company_register');
 
 
 });

@@ -81,7 +81,7 @@
 						</div>
 						<div class="row mb-3 text-center d-flex flex-flow">
 							<div class="col">
-								<a href=""><button class="btn btn-primary">
+								<a href="{{route('user_edit_form')}}"><button class="btn btn-primary">
 										編集
 									</button></a>
 							</div>

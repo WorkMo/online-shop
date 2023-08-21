@@ -28,9 +28,9 @@
 						<td>{{$product->product_name}}</td>
 						<td>{{$product->product_public}}</td>
 						<td>{{$product->productCategory->category_name}}</td>
-						<td>{{$product->kinds_count}}</td>
+						<td>{{number_format($product->kinds_count)}}</td>
 						<td>{{$product->review_rating_average}}</td>
-						<td>{{$product->total_sales}}</td>
+						<td>{{number_format($product->total_sales)}}</td>
 						<td class="text-start">@if($product->kinds_count == 0)商品種類を登録してください。@endif</td>
 						<td><a href="{{route('product_detail',$product->id)}}"><button class="btn btn-outline-dark">詳細</button></a></td>
 						<td><a href="{{route('kind_list',$product->id)}}"><button class="btn btn-outline-dark">種類</button></a></td>

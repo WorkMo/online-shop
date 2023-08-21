@@ -21,9 +21,9 @@
 							@endif
 							<div class="carousel-inner  border rounded-4">
 								<div class="carousel-item active">
-									<img src="{{asset($product->product_images[0])}}" class="object-fit-contain d-block w-100" alt="商品画像1" data-bs-toggle="modal" data-bs-target="#product_image_Modal1">
+									<img src="{{asset($product->product_images[0])}}" class=" d-block w-100" alt="商品画像1" data-bs-toggle="modal" data-bs-target="#product_image_Modal1" style="height:400px;object-fit:contain;">
 								</div>
-								<div class="modal fade" id="product_image_Modal1" tabindex="-1" aria-hidden="true">
+								<div class=" modal fade" id="product_image_Modal1" tabindex="-1" aria-hidden="true">
 									<div class="modal-dialog">
 										<div class="modal-content  border-0 rounded-4">
 											<img src="{{asset($product->product_images[0])}}" class=" border-0 rounded-4 d-block object-fit-none" alt="商品画像1" style="width:100%;height:100%;">
@@ -33,12 +33,12 @@
 								@if($product->image_count>1)
 								@for($i=1;$i<$product->image_count;$i++)
 									<div class="carousel-item">
-										<img src="{{asset($product->product_images[$i])}}" class="object-fit-contain d-block w-100" alt="商品画像<?= 1 + $i ?>" data-bs-toggle="modal" data-bs-target="#product_image_Modal<?= 1 + $i ?>">
+										<img src="{{asset($product->product_images[$i])}}" class="object-fit-contain d-block w-100" alt="商品画像<?= 1 + $i ?>" data-bs-toggle="modal" data-bs-target="#product_image_Modal<?= 1 + $i ?>" style="object-fit:contain;width:500px;height:500px;min-height:500px;">
 									</div>
 									<div class="modal fade" id="product_image_Modal<?= 1 + $i ?>" tabindex="-1" aria-hidden="true">
 										<div class="modal-dialog">
 											<div class="modal-content  border-0 rounded-4">
-												<img src="{{asset($product->product_images[$i])}}" class=" border-0 rounded-4 d-block object-fit-none" alt="商品画像1" style="width:100%;height:100%;">
+												<img src="{{asset($product->product_images[$i])}}" class=" border-0 rounded-4 d-block" alt="商品画像1" style="width:100%;height:100%;object-fit:cover;">
 											</div>
 										</div>
 									</div>
@@ -58,13 +58,13 @@
 						</div>
 						<div class="carousel slide text-center border-0">
 							@if($product->image_count >0)
-							<div class="">
+							<div class="mt-1">
 								<button type=" button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide-to="0" aria-current="true" aria-label="Slide 1" class="border-0 active">
-									<img src="{{asset($product->product_images[0])}}" alt="" style="width:50px;height:50px;" class="object-fit-cover">
+									<img src="{{asset($product->product_images[0])}}" alt="" style="width:50px;height:50px;object-fit:cover;" class="object-fit-cover">
 								</button>
 								@for($i=1;$i<$product->image_count;$i++)
 									<button type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide-to="<?= $i ?>" aria-label="Slide <?= $i + 1 ?>" class="border-0">
-										<img src="{{asset($product->product_images[$i])}}" alt="" style="width:50px;height:50px;" class="object-fit-cover">
+										<img src="{{asset($product->product_images[$i])}}" alt="" style="width:50px;height:50px;object-fit:cover;" class="object-fit-cover">
 									</button>
 									@endfor
 							</div>
@@ -134,11 +134,43 @@
 				</div>
 
 			</div>
+
 			<div class="card fs-1 m-2 overflow-auto">
-				レビュー
-			</div>
-			<div class="card fs-1 m-2 overflow-auto">
-				会社概要
+				<div class="card-header fs-5 text-center">レビュー</div>
+				@foreach($reviews as $review)
+				<div class="card mb-5 p-3 bg-light" id="{{$review->id}}">
+
+					<div class="card-body border border-0 mt-3">
+						<div class="row g-0 align-middle my-auto text-start">
+							<div class="col row bg-light border border-0">
+								<div class="col p-3 align-middle my-auto ">
+									<a href="{{ route('detail',$review->buy->kind->product_id) }}" class="text-decoration-none text-black">
+										<p class="card-title mb-3 fs-6">商品名 : {{$review->buy->bought_name}}</p>
+									</a>
+									<p class="card-title mb-3 fs-6">表示名 : {{$review->review_name}}</p>
+									<p class="card-title mb-3 fs-6">評　価 : <span class="card-text Stars" style="--rating: {{$review->review_rating }};">
+										</span></p>
+									<p class="card-title mb-3 fs-6">投稿日 : {{($review->created_at->format('Y年m月d日'))}}</p>
+								</div>
+								<div class="col-7 text-start align-start fs-5 card">
+									{{$review->review_text}}
+									<div class="d-flex lex-flow">
+										@if($review->review_images_count>0)
+										@foreach($review->reviewImages as $reviewImage)
+										<img src="{{asset($reviewImage->review_image)}}" style="width:150px;height:150px;" class="border" alt="">
+										@endforeach
+										@endif
+									</div>
+								</div>
+								<div class="col-1 text-start align-start fs-5 ">
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				@endforeach
+
 			</div>
 		</div>
 	</div>

@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class InquiryImage extends Model {
+class ReviewCompanyImage extends Model {
 	use HasFactory;
 	use HasUuids;
 	protected $fillable = [
-		'inquiry_image_status',
-		'inquiry_id',
-		'inquiry_image',
+		'review_company_image_status',
+		'review_company_id',
+		'review_company_image',
 	];
-	// inquiryと連結
-	public function inquiry() {
-		return $this->belongsTo(Inquiry::class);
+	// ReviewCompanyと連結
+	public function reviewCompany() {
+		return $this->belongsTo(ReviewCompany::class);
 	}
 }

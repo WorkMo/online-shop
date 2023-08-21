@@ -11,6 +11,7 @@ class Kind extends Model {
 	use HasUuids;
 	protected $fillable = [
 		'kind_status',
+		'kind_public',
 		'product_id',
 		'kind_name',
 		'barcode',

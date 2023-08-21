@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductCategory;
+use App\Models\Review;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -28,7 +29,8 @@ class ProductController extends Controller {
 
 
 		$products = Product::with(['kinds' => function ($q) {
-			$q->where('kind_status', 'active')->where('kind_public', 'public');
+			$q->where('kind_status', 'active')
+			->where('kind_public', 'public');
 		}, 'watchLists'])
 			->where('product_status', 'active')
 			->where('product_public', 'public')
@@ -105,14 +107,14 @@ class ProductController extends Controller {
 		$products = Product::with(['kinds' => function ($q) {
 			$q->where('kind_status', 'active')->where('kind_public', 'public');
 		}, 'watchLists'])
-		->where('product_status', 'active')
-		->where('product_public', 'public')
-		->has('kinds')
+			->where('product_status', 'active')
+			->where('product_public', 'public')
+			->has('kinds')
 			->withMin('kinds', 'product_price_with_tax')
 			->withMax('kinds', 'product_price_with_tax')
 			->orderBy('created_at', 'asc')
-			->whereHas('watchLists',function($q){
-				$q->where('user_id',Auth::user()->id);
+			->whereHas('watchLists', function ($q) {
+				$q->where('user_id', Auth::user()->id);
 			})
 			->get();
 		foreach ($products as $product) {
@@ -126,7 +128,7 @@ class ProductController extends Controller {
 			}
 		}
 		$product_categories = ProductCategory::where('product_category_status', 'active')
-		->get();
+			->get();
 		return view('user/index', [
 			'products' => $products,
 			'product_categories' => $product_categories,
@@ -175,7 +177,11 @@ class ProductController extends Controller {
 		foreach ($product->kinds as $kind) {
 			$kind_data[$kind->id] = $kind->product_price_with_tax;
 		}
-		return view('user/detail', ['product' => $product, 'kind_data' => $kind_data]);
+
+		$reviews=Review::whereHas('buy.kind.product',function($q)use($product_id){
+			$q->where('id',$product_id);
+		})->get()->sortByDesc('create_at');
+		return view('user/detail', ['product' => $product, 'kind_data' => $kind_data,'reviews'=>$reviews]);
 	}
 
 
@@ -299,10 +305,17 @@ class ProductController extends Controller {
 		}
 		$request->validate($validate_data);
 		// Productへ保存
+		$save = Product::create([
+			'user_id' => Auth::user()->id,
+			'product_name' => $request->product_name,
+			'product_keyword' => $request->product_keyword,
+			'product_category_id' => $request->product_category_id,
+			'product_detail' => $request->product_detail,
+		]);
 		if ($request->product_main_image !== null) {
 			$time = now();
 			$main_image_name = $time . '_' . $request->file('product_main_image')->getClientOriginalName();
-			$id = (Product::count()) + 1;
+			$id = $save->id;
 			$main_image_path = 'storage/product/' . $id . '/' . $main_image_name;
 			if (mb_strlen($main_image_path) > 255) {
 				$request->file('product_main_image')->storeAs('public/product/' . $id, $time . '_main_image');
@@ -313,14 +326,8 @@ class ProductController extends Controller {
 		} else {
 			$main_image_path = '';
 		}
-		$save = Product::create([
-			'user_id' => Auth::user()->id,
-			'product_name' => $request->product_name,
-			'product_keyword' => $request->product_keyword,
-			'product_category_id' => $request->product_category_id,
-			'product_detail' => $request->product_detail,
-			'product_main_image' => $main_image_path,
-		]);
+		$save->product_main_image = $main_image_path;
+		$save->save();
 
 		//ProductImageへ保存
 

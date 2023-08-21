@@ -9,5 +9,18 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class AnswerLike extends Model {
 	use HasFactory;
 	use HasUuids;
-	protected $fillable = [];
+	protected $fillable = [
+		'user_id',
+		'answer_id',
+	];
+
+	// Answerと連結
+	public function answer() {
+		return $this->belongsTo(Answer::class);
+	}
+	// user
+	public function user() {
+		return $this->belongsTo(User::class);
+	}
+
 }

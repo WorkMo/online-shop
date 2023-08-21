@@ -200,8 +200,8 @@
 							</div>
 						</div>
 						<div class="row mb-0">
-							<div class="col-md-6 offset-md-4">
-								<button type="submit" class="btn btn-primary">
+							<div class="col-md-6 offset-md-4 text-center mt-3">
+								<button type="submit" class="btn btn-primary w-50">
 									登録
 								</button>
 							</div>

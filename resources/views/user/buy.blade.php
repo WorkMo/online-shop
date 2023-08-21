@@ -104,12 +104,7 @@
 										</label>
 									</div>
 									@if( session('data.buys')->first()->kind->product->user->admin==1)
-									<div class="form-check">
-										<input class="form-check-input" type="radio" name="payment_method" id="payment_method2" value="クレジット" @if( old('payment_method','')=='クレジット' )checked @endif required>
-										<label class="form-check-label" for="payment_method2">
-											クレジット
-										</label>
-									</div>
+				
 									@endif
 								</div>
 							</fieldset>
@@ -133,19 +128,19 @@
 												<h5 class="card-title mb-3">商品名 : {{$buy->kind->product->product_name}}</h5>
 											</a>
 											<p class="card-text align-middle">種類 : <span class="fs-5  align-middle">{{$buy->kind->kind_name}}</span></p>
-											<p class="card-text align-middle">単価 : <span class="fs-5  align-middle">{{$buy->kind->product_price_with_tax}}</span></p>
-											<p class="card-text align-middle">数量 : <span class="fs-5  align-middle">{{$buy->cart_quantity}}</span></p>
+											<p class="card-text align-middle">単価 : <span class="fs-5  align-middle">{{number_format($buy->kind->product_price_with_tax)}}</span></p>
+											<p class="card-text align-middle">数量 : <span class="fs-5  align-middle">{{number_format($buy->cart_quantity)}}</span></p>
 										</div>
 										<div class="col-3 d-flex flex-flow text-end  align-middle my-auto">
 											<h5 class="m-3 text-start align-middle my-auto">金額 :</h5>
-											<h5 class="text-end align-middle my-auto ms-auto">{{$buy->kind->product_price_with_tax*$buy->cart_quantity}}円</h5>
+											<h5 class="text-end align-middle my-auto ms-auto">{{number_format($buy->kind->product_price_with_tax*$buy->cart_quantity)}}円</h5>
 										</div>
 									</div>
 								</div>
 							</div>
 							@endforeach
 							<div class="card-body text-end">
-								<h5 class="card-title mb-3">合計金額 : {{session('data.sum')}}円</h5>
+								<h5 class="card-title mb-3">合計金額 : {{number_format(session('data.sum'))}}円</h5>
 
 								<button type="submit" class="btn btn-success text-center align-middle my-auto" name="buy" value=""> 購入</button>
 

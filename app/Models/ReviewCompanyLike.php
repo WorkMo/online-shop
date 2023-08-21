@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class ReviewLike extends Model {
+class ReviewCompanyLike extends Model {
 	use HasFactory;
 	use HasUuids;
 	protected $fillable = [
 		'user_id',
-		'review_id',
+		'review_company_id',
 	];
-	// Reviewと連結
-	public function review() {
-		return $this->belongsTo(Review::class);
+	// ReviewCompanyと連結
+	public function reviewCompany() {
+		return $this->belongsTo(ReviewCompany::class);
 	}
 	// user
 	public function user() {

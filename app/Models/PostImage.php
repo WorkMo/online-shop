@@ -9,5 +9,13 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class PostImage extends Model {
 	use HasFactory;
 	use HasUuids;
-	protected $fillable = [];
+	protected $fillable = [
+		'post_image_status',
+		'post_id',
+		'post_image',
+	];
+	// Postと連結
+	public function post() {
+		return $this->belongsTo(Post::class);
+	}
 }

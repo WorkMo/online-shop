@@ -14,9 +14,9 @@ return new class extends Migration {
 		Schema::create('companies', function (Blueprint $table) {
 			$table->uuid('id')->primary()->index()->comment('会社ID');
 			$table->char('user_id', 36)->index()->comment('登録ユーザーID');
-			$table->string('product_status', 20)->index()->default('active')->comment('会社ステータス active or deleted');
-			$table->string('product_detail')->index()->comment('会社概要');
-			$table->string('products_image')->nullable($value = true)->comment('商品メイン画像URL');
+			$table->string('company_status', 20)->index()->default('active')->comment('会社ステータス active or deleted');
+			$table->string('company_detail')->index()->comment('会社概要');
+			$table->string('company_icon')->nullable($value = true)->comment('会社メイン画像URL');
 			$table->timestamps();
 		});
 	}

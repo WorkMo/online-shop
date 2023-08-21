@@ -15,6 +15,7 @@ use Illuminate\Validation\Rule;
 use App\Rules\PhoneNumber;
 use Laravel\Cashier\Cashier;
 
+
 class BuyController extends Controller {
 	protected function buy_form($seller) {
 		$buys = Cart::with(['kind' => function ($q) {
@@ -94,21 +95,28 @@ class BuyController extends Controller {
 
 				Buy::create([
 					'user_id' => Auth::user()->id,
-					'invoice_id' => $invoice_id,
 					'kind_id' => $buy_item->kind->id,
-					'seller_name' => $buy_item->kind->product->user->user_name,
+					'invoice_id' => $invoice_id,
 					'seller_post_code' => $buy_item->kind->product->user->post_code,
+					'seller_name' => $buy_item->kind->product->user->user_name,
 					'seller_address' => $seller_address,
+					'seller_email' => $buy_item->kind->product->user->email,
+					'seller_phone_number' => $buy_item->kind->product->user->phone_number,
 					'purchaser_post_code' => $request->post_code,
 					'purchaser_name' => $request->user_name,
 					'purchaser_address' => $purchaser_address,
 					'purchaser_email' => $request->email,
 					'purchaser_phone_number' => $request->phone_number,
-					'purchased_main_image' => $buy_item->kind->product->product_main_image,
-					'purchased_name' => $buy_item->kind->product->product_name,
+					'bought_main_image' => $buy_item->kind->product->product_main_image,
+					'bought_name' => $buy_item->kind->product->product_name,
+					'bought_category_name' => $buy_item->kind->product->productCategory->category_name,
+					'bought_kind_name' => $buy_item->kind->kind_name,
+					'bought_barcode' => $buy_item->kind->barcode,
+					'bought_code' => $buy_item->kind->code,
 					'bought_price_with_tax' => $buy_item->kind->product_price_with_tax,
 					'bought_tax_rate' => $buy_item->kind->product_tax_rate,
 					'bought_quantity' => $buy_item->cart_quantity,
+					'bought_sum_price' => $buy_item->kind->product_price_with_tax * $buy_item->cart_quantity,
 					'payment_method' => $request->payment_method,
 				]);
 				$contact = Cart::find($buy_item->id);
@@ -143,9 +151,184 @@ class BuyController extends Controller {
 
 
 	protected function order_history() {
-		$order_histories = Buy::with(['user', 'kind'])->whereHas('user', function ($q) {
+		$order_histories = Buy::with(['user', 'kind','review'])->whereHas('user', function ($q) {
 			$q->where('user_id', Auth::user()->id);
 		})->get()->groupBy('invoice_id');
-		return view('user/order_history', ['order_histories' => $order_histories]);
+		$sum = [];
+		foreach ($order_histories as $order_history) {
+			$sum_array = [];
+			foreach ($order_history as $order_item) {
+				$sum_array[] = $order_item->bought_price_with_tax * $order_item->bought_quantity;
+			}
+			$sum[$order_history->first()->invoice_id] = array_sum($sum_array);
+		}
+		foreach ($order_histories as $order_history) {
+			foreach ($order_history as $order_item) {
+				if ($order_item->bought_main_image == null) {
+					$order_item->bought_main_image = 'storage/img/l_e_others_501.png';
+				} else {
+					$file_name = str_replace('storage/', '', $order_item->bought_main_image);
+
+					if (Storage::disk('public')->exists($file_name) == null) {
+						$order_item->bought_main_image = 'storage/img/l_e_others_501.png';
+					}
+				}
+			}
+		}
+		$category_data = Buy::with(['user', 'kind'])->whereHas('user', function ($q) {
+			$q->where('user_id', Auth::user()->id);
+		})->get();
+		$total = $category_data->sum('bought_sum_price');
+		$category_percent['group'] = $category_data->groupBy('bought_category_name')->map(function ($q) use ($total) {
+			$data['price'] = $q->sum('bought_sum_price');
+			$data['count'] = $q->count();
+			$data['quantity'] = $q->sum('bought_quantity');
+			$data['percent'] = round($q->sum('bought_sum_price') / $total * 100, 2);
+			return $data;
+		})->sortByDesc('price');
+		$category_percent['sum_price'] = $category_data->sum('bought_sum_price');
+		$category_percent['sum_quantity'] = $category_data->sum('bought_quantity');
+		$category_percent['sum_count'] = $category_data->count();
+		$category_percent['color'] = [
+			'darkcyan' => 'white',
+			'lightyellow' => 'black',
+			'coral' => 'white',
+			'lavender' => 'black',
+			'teal' => 'white',
+			'lightgoldenrodyellow' => 'black',
+			'tomato' => 'white',
+			'lightsteelblue' => 'black',
+			'darkslategray' => 'white',
+			'lemonchiffon' => 'black',
+			'orangered' => 'white',
+			'lightslategray' => 'black',
+			'darkgreen' => 'white',
+			'wheat' => 'black',
+			'red' => 'white',
+			'slategray' => 'white',
+			'green' => 'white',
+			'burlywood' => 'black',
+			'crimson' => 'white',
+			'steelblue' => 'white',
+			'forestgreen' => 'white',
+			'tan' => 'black',
+			'mediumvioletred' => 'white',
+			'royalblue' => 'white',
+			'seagreen' => 'white',
+			'khaki' => 'black',
+			'deeppink' => 'white',
+			'midnightblue' => 'white',
+			'mediumseagreen' => 'black',
+			'yellow' => 'black',
+			'hotpink' => 'black',
+			'navy' => 'white',
+			'mediumaquamarine' => 'black',
+			'gold' => 'black',
+			'palevioletred' => 'white',
+			'darkblue' => 'white',
+			'darkseagreen' => 'black',
+			'orange' => 'black',
+			'pink' => 'black',
+			'mediumblue' => 'white',
+			'aquamarine' => 'black',
+			'sandybrown' => 'black',
+			'lightpink' => 'black',
+			'floralwhite' => 'black',
+			'blue' => 'white',
+			'palegreen' => 'black',
+			'darkorange' => 'black',
+			'thistle' => 'black',
+			'linen' => 'black',
+			'dodgerblue' => 'white',
+			'lightgreen' => 'black',
+			'goldenrod' => 'black',
+			'magenta' => 'white',
+			'antiquewhite' => 'black',
+			'cornflowerblue' => 'black',
+			'springgreen' => 'black',
+			'peru' => 'black',
+			'fuchsia' => 'white',
+			'papayawhip' => 'black',
+			'deepskyblue' => 'black',
+			'mediumspringgreen' => 'black',
+			'darkgoldenrod' => 'black',
+			'violet' => 'black',
+			'blanchedalmond' => 'black',
+			'lightskyblue' => 'black',
+			'lawngreen' => 'black',
+			'chocolate' => 'black',
+			'plum' => 'black',
+			'bisque' => 'black',
+			'skyblue' => 'black',
+			'chartreuse' => 'black',
+			'sienna' => 'white',
+			'orchid' => 'white',
+			'moccasin' => 'black',
+			'lightblue' => 'black',
+			'greenyellow' => 'black',
+			'saddlebrown' => 'white',
+			'mediumorchid' => 'white',
+			'navajowhite' => 'black',
+			'powderblue' => 'black',
+			'lime' => 'black',
+			'maroon' => 'white',
+			'darkorchid' => 'white',
+			'peachpuff' => 'black',
+			'paleturquoise' => 'black',
+			'limegreen' => 'black',
+			'darkred' => 'white',
+			'darkviolet' => 'white',
+			'mistyrose' => 'black',
+			'lightcyan' => 'black',
+			'yellowgreen' => 'black',
+			'brown' => 'white',
+			'darkmagenta' => 'white',
+			'lavenderblush' => 'black',
+			'cyan' => 'black',
+			'darkolivegreen' => 'white',
+			'firebrick' => 'white',
+			'purple' => 'white',
+			'seashell' => 'black',
+			'aqua' => 'black',
+			'olivedrab' => 'white',
+			'indianred' => 'white',
+			'indigo' => 'white',
+			'oldlace' => 'black',
+			'turquoise' => 'black',
+			'olive' => 'white',
+			'rosybrown' => 'white',
+			'darkslateblue' => 'white',
+			'ivory' => 'black',
+			'mediumturquoise' => 'black',
+			'darkkhaki' => 'black',
+			'darksalmon' => 'black',
+			'blueviolet' => 'white',
+			'honeydew' => 'black',
+			'darkturquoise' => 'black',
+			'palegoldenrod' => 'black',
+			'lightcoral' => 'black',
+			'mediumpurple' => 'white',
+			'mintcream' => 'black',
+			'lightseagreen' => 'black',
+			'cornsilk' => 'black',
+			'salmon' => 'white',
+			'slateblue' => 'white',
+			'azure' => 'black',
+			'cadetblue' => 'black',
+			'beige' => 'black',
+			'lightsalmon' => 'black',
+			'mediumslateblue' => 'white',
+			'dimgray' => 'white',
+			'gray' => 'white',
+			'darkgray' => 'white',
+			'silver' => 'black',
+			'lightgray' => 'black',
+			'gainsboro' => 'black',
+			'whitesmoke' => 'black',
+			'snow' => 'black',
+			'ghostwhite' => 'black',
+		];
+		$category_percent['bg-color'] = array_keys($category_percent['color']);
+		return view('user/order_history', ['order_histories' => $order_histories, 'sum' => $sum, 'category_percent' => $category_percent]);
 	}
 }

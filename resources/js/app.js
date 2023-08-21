@@ -5,6 +5,8 @@ window.$ = jQuery;
 $(function () {
 	// inputフォームの増減
 	inputAddDel('.product_image_form', '.image_form', '.preview');
+	inputAddDel('.review_image_form', '.review_image_input', '.preview');
+
 
 	function inputAddDel(parents, children, preview_children) {
 		// フォームを増やす
@@ -30,6 +32,7 @@ $(function () {
 	// プレビュー表示
 
 	preview('.image_form', '.product_image_form', '.preview', '.preview_form', '.product_image_form', '.image_form');
+	preview('.review_image_input', '.review_image_form', '.preview', '.preview_form', '.review_image_form', '.review_image_input');
 	preview('.main_form', '.main_image_form', '.main_preview', '.main_preview_form', '.main_image_form', '.main_form');
 	preview('.icon_form', '.icon_image_form', '.icon_preview', '.icon_preview_form', '.icon_image_form', '.icon_form');
 
@@ -58,12 +61,14 @@ $(function () {
 
 	function change() {
 		changeNumbers('.image_form', 'product_image', '.product_image_form', '.preview', 'preview', '.preview_form');
+		changeNumbers('.review_image_input', 'review_image', '.review_image_form', '.preview', 'preview', '.preview_form');
 		changePreview('.main_form', '.main_image_form', '#main_preview_temp', '.main_preview_form');
 		changePreview('.icon_form', '.icon_image_form', '', '.icon_preview_form');
 	}
 	// 数字を入れ替える
 	function changeNumbers(target, name, parents, children, preview_name, preview_form) {
 		var $i = 0;
+		console.log('a')
 		$(target).each(function () {
 			if ($(this).val() !== "") {
 				$i++;
@@ -150,31 +155,31 @@ $(function () {
 
 
 
-		let watch = $('.watch-toggle'); //watch-toggleのついたiタグを取得し代入。
-		let WatchListId; //変数を宣言（なんでここで？）
-		watch.on('click', function () { //onはイベントハンドラー
-			let $this = $(this); //this=イベントの発火した要素＝iタグを代入
-			WatchListId = $this.data('watch-id'); //iタグに仕込んだdata-review-idの値を取得
-			//ajax処理スタート
-			$.ajax({
-				headers: { //HTTPヘッダ情報をヘッダ名と値のマップで記述
-					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-				},  //↑name属性がcsrf-tokenのmetaタグのcontent属性の値を取得
-				url: '/watch', //通信先アドレスで、このURLをあとでルートで設定します
-				method: 'POST', //HTTPメソッドの種別を指定します。1.9.0以前の場合はtype:を使用。
-				data: { //サーバーに送信するデータ
-					'product_id': WatchListId //いいねされた投稿のidを送る
-				},
+	let watch = $('.watch-toggle'); //watch-toggleのついたiタグを取得し代入。
+	let WatchListId; //変数を宣言（なんでここで？）
+	watch.on('click', function () { //onはイベントハンドラー
+		let $this = $(this); //this=イベントの発火した要素＝iタグを代入
+		WatchListId = $this.data('watch-id'); //iタグに仕込んだdata-review-idの値を取得
+		//ajax処理スタート
+		$.ajax({
+			headers: { //HTTPヘッダ情報をヘッダ名と値のマップで記述
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},  //↑name属性がcsrf-tokenのmetaタグのcontent属性の値を取得
+			url: '/watch', //通信先アドレスで、このURLをあとでルートで設定します
+			method: 'POST', //HTTPメソッドの種別を指定します。1.9.0以前の場合はtype:を使用。
+			data: { //サーバーに送信するデータ
+				'product_id': WatchListId //いいねされた投稿のidを送る
+			},
+		})
+			//通信成功した時の処理
+			.done(function (data) {
+				$this.toggleClass('watched'); //likedクラスのON/OFF切り替え。
+				$this.next('.watch-counter').html(data.watch_lists_count);
 			})
-				//通信成功した時の処理
-				.done(function (data) {
-					$this.toggleClass('watched'); //likedクラスのON/OFF切り替え。
-					$this.next('.watch-counter').html(data.watch_lists_count);
-				})
-				//通信失敗した時の処理
-				.fail(function () {
-					console.log('fail');
-				});
-		});
+			//通信失敗した時の処理
+			.fail(function () {
+				console.log('fail');
+			});
+	});
 
 });

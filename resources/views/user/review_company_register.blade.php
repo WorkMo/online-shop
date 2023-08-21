@@ -4,9 +4,9 @@
 	<div class="row justify-content-center">
 		<div class="col-md-9">
 			<div class="card">
-				<div class="card-header">新規登録</div>
+				<div class="card-header">レビュー登録</div>
 				<div class="card-body">
-					<form method="POST" action="{{ route('product_register') }}" enctype="multipart/form-data">
+					<form method="POST" action="{{ route('review_register') }}" enctype="multipart/form-data">
 						@csrf
 						<div class="row mb-3">
 							<label for="product_name" class="col-md-4 col-form-label text-md-end">商品名</label>

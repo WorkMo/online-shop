@@ -32,10 +32,10 @@
 					<tr class="text-center align-middle">
 						<td>{{$kind->kind_name}}</td>
 						<td>{{$kind->kind_public}}</td>
-						<td>{{$kind->product_price_with_tax}}</td>
+						<td>{{number_format($kind->product_price_with_tax)}}</td>
 						<td>{{$kind->product_tax_rate}}</td>
-						<td>{{$kind->stock_quantity}}</td>
-						<td>{{$kind->ordering_point}}</td>
+						<td>{{number_format($kind->stock_quantity)}}</td>
+						<td>{{number_format($kind->ordering_point)}}</td>
 						<td class="text-start">@if($kind->stock_quantity<$kind->ordering_point)注文点を下回りました。@endif</td>
 						<td><a href="{{route('kind_detail',$kind->id)}}"><button class="btn btn-outline-dark">詳細</button></a></td>
 						<td><a href="{{route('kind_delete',$kind->id)}}"><button class="btn btn-outline-dark delete">削除</button></a></td>

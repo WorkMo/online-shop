@@ -12,12 +12,14 @@ class Product extends Model {
 	protected $fillable = [
 		'user_id',
 		'product_status',
+		'product_public',
 		'product_name',
 		'product_keyword',
 		'product_category_id',
 		'product_detail',
 		'product_main_image',
 		'review_rating_average',
+		'review_rating_number',
 		'total_sales',
 	];
 
@@ -38,6 +40,10 @@ class Product extends Model {
 	// kind(商品種類)と連結
 	public function kinds() {
 		return $this->hasMany(Kind::class);
+	}
+	// Inquiryと連結
+	public function inquiries() {
+		return $this->hasMany(Inquiry::class);
 	}
 
 	// purchase(仕入)と連結

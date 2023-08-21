@@ -9,5 +9,16 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class PostLike extends Model {
 	use HasFactory;
 	use HasUuids;
-	protected $fillable = [];
+	protected $fillable = [
+		'user_id',
+		'post_id',
+	];
+	// Postと連結
+	public function post() {
+		return $this->belongsTo(Post::class);
+	}
+	// user
+	public function user() {
+		return $this->belongsTo(User::class);
+	}
 }

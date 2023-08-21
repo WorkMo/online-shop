@@ -9,5 +9,16 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class ReplyLike extends Model {
 	use HasFactory;
 	use HasUuids;
-	protected $fillable = [];
+	protected $fillable = [
+		'user_id',
+		'reply_id',
+	];
+	// Replyと連結
+	public function reply() {
+		return $this->belongsTo(Reply::class);
+	}
+	// user
+	public function user() {
+		return $this->belongsTo(User::class);
+	}
 }

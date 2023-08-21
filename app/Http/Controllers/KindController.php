@@ -37,6 +37,16 @@ class KindController extends Controller {
 		session()->forget('data');
 		return redirect(route('kind_list', ['product_id' => $save->product_id]));
 	}
+	protected function kind_detail($kind_id) {
+		$kinds = Kind::with(['product' => function ($q) {
+			$q->where('product_status', 'active');
+		}])->where('kind_status', 'active')->has('product', '>', 0);
+		$kinds = $kinds->whereHas('product', function ($q) {
+			$q->where('user_id', Auth::user()->id);
+		});
+		$kind=$kinds->find($kind_id);
+		return redirect(route('kind_detail', ['kind' => $kind]));
+	}
 	protected function kind_list($product_id) {
 		$kinds = Kind::with(['product' => function ($q) {
 			$q->where('product_status', 'active');

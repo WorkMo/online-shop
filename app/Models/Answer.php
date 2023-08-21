@@ -11,5 +11,26 @@ class Answer extends Model {
 	use HasUuids;
 
 
-	protected $fillable = [];
+	protected $fillable = [
+		'answer_status',
+		'inquiry_id',
+		'user_id',
+		'answer_text',
+	];
+	// user（ユーザー）と連結
+	public function user() {
+		return $this->belongsTo(User::class);
+	}
+	// Inquiryと連結
+	public function Inquiry() {
+		return $this->belongsTo(Inquiry::class);
+	}
+	// AnswerImageと連結
+	public function answerImages() {
+		return $this->hasMany(AnswerImage::class);
+	}
+	// AnswerLikeと連結
+	public function answerLikes() {
+		return $this->hasMany(AnswerLike::class);
+	}
 }

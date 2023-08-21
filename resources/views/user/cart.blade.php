@@ -26,7 +26,7 @@
 										<h5 class="card-title mb-3">商品名 : {{$cart_shop['kind']['product']['product_name']}}</h5>
 									</a>
 									<p class="card-text ">種類 : {{$cart_shop['kind']['kind_name']}}</p>
-									<p class="card-text ">単価 : {{$cart_shop['kind']['product_price_with_tax']}}</p>
+									<p class="card-text ">単価 : {{number_format($cart_shop['kind']['product_price_with_tax'])}}</p>
 
 									<form method="POST" action="{{route('cart_update')}}">
 										@csrf
@@ -41,7 +41,7 @@
 								</div>
 								<div class="col-4 d-flex flex-flow text-end  align-middle my-auto">
 									<h5 class="text-start align-middle my-auto">金額 :</h5>
-									<h5 class="text-end align-middle my-auto ms-auto">{{$cart_shop['kind']['product_price_with_tax']*$cart_shop['cart_quantity']}}円</h5>
+									<h5 class="text-end align-middle my-auto ms-auto">{{number_format($cart_shop['kind']['product_price_with_tax']*$cart_shop['cart_quantity'])}}円</h5>
 								</div>
 								<div class="col-2 d-flex flex-flow text-end  align-middle my-auto">
 									<a href="{{route('cart_delete',$cart_shop['id'])}}">
@@ -53,7 +53,7 @@
 					</div>
 					@endforeach
 					<div class="card-body text-end">
-						<h5 class="card-title mb-3">合計金額 : {{$sum[$cart_shops['0']['kind']['product']['user']['user_name']]}}円</h5>
+						<h5 class="card-title mb-3">合計金額 : {{number_format($sum[$cart_shops['0']['kind']['product']['user']['user_name']])}}円</h5>
 						<a href="{{ route('buy_form',['seller'=>$cart_shops['0']['kind']['product']['user_id']]) }}">
 							<button class="btn btn-success text-center align-middle my-auto"> 購入</button>
 						</a>
